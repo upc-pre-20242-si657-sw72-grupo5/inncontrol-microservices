@@ -19,7 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.times;
 
-class InventoryCommandServiceImplTest {
+class InventoryServiceTest {
 
     @Mock
     private ItemRepository inventoryRepository;
