@@ -33,30 +33,28 @@ class AccommodationServiceApplicationTests {
 
     // Test CREATE operation
     @Test
-    void registerRoom_WithValidData() {
+    void givenInvalidRoomData_whenRegisteringRoom_thenThrowException() {
+        // Given
         RoomDTO roomDTO = new RoomDTO();
-        roomDTO.setRoomNumber(101);
-        roomDTO.setRoomType("Deluxe");
+        roomDTO.setRoomNumber(-1); // Invalid room number
+        roomDTO.setRoomType("");
 
-        Room room = new Room();
-        room.setRoomNumber(101);
-        when(roomRepository.save(any(Room.class))).thenReturn(room);
-
-        Room savedRoom = roomService.registerRoom(roomDTO);
-
-        assertNotNull(savedRoom);
-        assertEquals(101, savedRoom.getRoomNumber());
+        // When & Then
+        assertThrows(IllegalArgumentException.class, () -> roomService.registerRoom(roomDTO));
     }
 
     // Test READ operation
     @Test
     void findRoomByRoomNumber() {
+        // Given
         Room room = new Room();
         room.setRoomNumber(101);
         when(roomRepository.findByRoomNumber(101)).thenReturn(Optional.of(room));
 
+        // When
         Optional<Room> foundRoom = roomService.findRoomByRoomNumber(101);
 
+        // Then
         assertTrue(foundRoom.isPresent());
         assertEquals(101, foundRoom.get().getRoomNumber());
     }
@@ -64,6 +62,7 @@ class AccommodationServiceApplicationTests {
     // Test UPDATE operation
     @Test
     void updateRoom() {
+        // Given
         RoomDTO roomDTO = new RoomDTO();
         roomDTO.setRoomNumber(101);
         roomDTO.setRoomType("Deluxe");
@@ -74,8 +73,10 @@ class AccommodationServiceApplicationTests {
         when(roomRepository.findByRoomNumber(101)).thenReturn(Optional.of(existingRoom));
         when(roomRepository.save(any(Room.class))).thenReturn(existingRoom);
 
+        // When
         Optional<Room> updatedRoom = roomService.updateRoom(101, roomDTO);
 
+        // Then
         assertTrue(updatedRoom.isPresent());
         assertEquals("DELUXE", updatedRoom.get().getRoomType().name());
     }
@@ -83,6 +84,7 @@ class AccommodationServiceApplicationTests {
     // Test GET ALL operation
     @Test
     void getAllRooms() {
+        // Given
         Room room1 = new Room();
         room1.setRoomNumber(101);
         Room room2 = new Room();
@@ -90,8 +92,10 @@ class AccommodationServiceApplicationTests {
 
         when(roomRepository.findAll()).thenReturn(Arrays.asList(room1, room2));
 
+        // When
         List<Room> rooms = roomService.getAllRooms();
 
+        // Then
         assertNotNull(rooms);
         assertEquals(2, rooms.size());
         assertEquals(101, rooms.get(0).getRoomNumber());
@@ -99,20 +103,15 @@ class AccommodationServiceApplicationTests {
     }
 
     @Test
-    void getRoomsByRoomNumber() {
-        Room room1 = new Room();
-        room1.setRoomNumber(101);
-        Room room2 = new Room();
-        room2.setRoomNumber(101);
+    void givenNoRoomsExist_whenGettingAllRooms_thenReturnEmptyList() {
+        // Given
+        when(roomRepository.findAll()).thenReturn(Arrays.asList());
 
-        when(roomRepository.findByRoomNumber(101)).thenReturn(Optional.of(room1), Optional.of(room2));
+        // When
+        List<Room> rooms = roomService.getAllRooms();
 
-        Optional<Room> foundRoom1 = roomService.findRoomByRoomNumber(101);
-        Optional<Room> foundRoom2 = roomService.findRoomByRoomNumber(101);
-
-        assertTrue(foundRoom1.isPresent());
-        assertTrue(foundRoom2.isPresent());
-        assertEquals(101, foundRoom1.get().getRoomNumber());
-        assertEquals(101, foundRoom2.get().getRoomNumber());
+        // Then
+        assertNotNull(rooms);
+        assertTrue(rooms.isEmpty());
     }
 }
