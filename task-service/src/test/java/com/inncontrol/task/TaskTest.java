@@ -85,4 +85,34 @@ class TaskTest {
         assertNotNull(niceDueDate);
         assertFalse(niceDueDate.isEmpty());
     }
+
+    // Scenario: Attempt to complete a task that is already completed
+    @Test
+    void testCannotCompleteAlreadyCompletedTask() {
+        // Given: A task is already completed
+        task.complete();
+        // When: We attempt to complete the task again
+        // Then: An IllegalStateException should be thrown
+        assertThrows(IllegalStateException.class, task::complete);
+    }
+
+    // Scenario: Verify task cannot start after being completed
+    @Test
+    void testCannotStartCompletedTask() {
+        // Given: A task is completed
+        task.complete();
+        // When: We attempt to start the completed task
+        // Then: An IllegalStateException should be thrown
+        assertThrows(IllegalStateException.class, task::start);
+    }
+
+    // Scenario: Ensure task is not expired when it’s due in the future
+    @Test
+    void testIsNotExpiredFuture() {
+        // Given: A task is scheduled with a due date in the future
+        task.setDueDate(new Date(System.currentTimeMillis() + 86400000)); // 1 day in the future
+        // When: We check if the task is expired
+        // Then: The task should not be expired
+        assertFalse(task.isExpired());
+    }
 }
