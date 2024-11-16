@@ -89,4 +89,16 @@ class InventoryServiceTest {
         // Verificamos que se haya llamado al método save del repositorio
         verify(inventoryRepository, times(1)).save(any(Inventory.class));
     }
+    // Test DELETE operation
+    @Test
+    void givenValidDeleteItemsCommand_whenHandle_thenItemShouldBeDeleted() {
+        // Given: Preparamos el comando de eliminación y un inventario existente
+        Long inventoryId = 1L;
+        DeleteItemsCommand deleteItemsCommand = new DeleteItemsCommand(inventoryId);
+        Inventory existingInventory = new Inventory(new CreateItemsCommand("itemName", "description", 10, "brand"));
+        existingInventory.setId(inventoryId);
+
+        // When: Se ejecuta el comando de eliminación
+        when(inventoryRepository.findById(inventoryId)).thenReturn(Optional.of(existingInventory));
+    }
 }
