@@ -32,6 +32,7 @@ class EmployeesServiceApplicationTests {
 	// Test CREATE operation
 	@Test
 	void registerEmployee_WithValidData() {
+		// Given
 		EmployeeDTO employeeDTO = new EmployeeDTO();
 		employeeDTO.setNombre("Juan");
 		employeeDTO.setApellido("Perez");
@@ -41,10 +42,13 @@ class EmployeesServiceApplicationTests {
 
 		Employee employee = new Employee();
 		employee.setId(1L);
+
 		when(employeeRepository.save(any(Employee.class))).thenReturn(employee);
 
+		// When
 		Employee savedEmployee = employeeService.registerEmployee(employeeDTO);
 
+		// Then
 		assertNotNull(savedEmployee);
 		assertEquals(1L, savedEmployee.getId());
 	}
@@ -52,12 +56,16 @@ class EmployeesServiceApplicationTests {
 	// Test READ operation
 	@Test
 	void getEmployeeById() {
+		// Given
 		Employee employee = new Employee();
 		employee.setId(1L);
+
 		when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee));
 
+		// When
 		Optional<Employee> foundEmployee = employeeService.getEmployeeById(1L);
 
+		// Then
 		assertTrue(foundEmployee.isPresent());
 		assertEquals(1L, foundEmployee.get().getId());
 	}
@@ -65,6 +73,7 @@ class EmployeesServiceApplicationTests {
 	// Test UPDATE operation
 	@Test
 	void updateEmployee() {
+		// Given
 		EmployeeDTO employeeDTO = new EmployeeDTO();
 		employeeDTO.setNombre("Carlos");
 		employeeDTO.setApellido("Ramirez");
@@ -78,24 +87,50 @@ class EmployeesServiceApplicationTests {
 		when(employeeRepository.findById(1L)).thenReturn(Optional.of(existingEmployee));
 		when(employeeRepository.save(any(Employee.class))).thenReturn(existingEmployee);
 
+		// When
 		Optional<Employee> updatedEmployee = employeeService.updateEmployee(1L, employeeDTO);
 
+		// Then
 		assertTrue(updatedEmployee.isPresent());
 		assertEquals("Carlos", updatedEmployee.get().getNombre());
 		assertEquals("Ramirez", updatedEmployee.get().getApellido());
 	}
 
+	// Test UPDATE operation (negative scenario)
+	@Test
+	void updateEmployee_WhenEmployeeDoesNotExist() {
+		// Given
+		EmployeeDTO employeeDTO = new EmployeeDTO();
+		employeeDTO.setNombre("Carlos");
+
+		when(employeeRepository.findById(1L)).thenReturn(Optional.empty());
+
+		verify(employeeRepository, never()).save(any(Employee.class));
+	}
+
 	// Test DELETE operation
 	@Test
 	void deleteEmployee_ShouldDeleteEmployee_WhenEmployeeExists() {
+		// Given
 		Employee existingEmployee = new Employee();
 		existingEmployee.setId(1L);
 
 		when(employeeRepository.findById(1L)).thenReturn(Optional.of(existingEmployee));
 		doNothing().when(employeeRepository).deleteById(1L);
 
+		// When
 		employeeService.deleteEmployee(1L);
 
+		// Then
 		verify(employeeRepository, times(1)).deleteById(1L);
+	}
+
+	// Test DELETE operation (negative scenario)
+	@Test
+	void deleteEmployee_WhenEmployeeDoesNotExist() {
+		// Given
+		when(employeeRepository.findById(1L)).thenReturn(Optional.empty());
+
+		verify(employeeRepository, never()).deleteById(anyLong());
 	}
 }
