@@ -32,6 +32,7 @@ class CommunicationsServiceApplicationTests {
 		MockitoAnnotations.openMocks(this);
 	}
 
+	// Test CREATE operation
 	@Test
 	void createMessage_WithValidData() {
 		MessageDto messageDto = new MessageDto();
@@ -53,6 +54,7 @@ class CommunicationsServiceApplicationTests {
 		assertEquals(1L, savedMessage.getId());
 	}
 
+	// Test READ operation
 	@Test
 	void getAllMessages() {
 		// Arrange
@@ -69,6 +71,21 @@ class CommunicationsServiceApplicationTests {
 		assertEquals(1, foundMessages.size());
 		assertEquals(1L, foundMessages.get(0).getId());
 	}
+
+	@Test
+	void shouldReturnEmptyListWhenNoMessagesFound() {
+		// Arrange
+		when(messageRepository.findAll()).thenReturn(List.of());
+
+		// Act
+		List<Message> foundMessages = messageService.getAllMessages();
+
+		// Assert
+		assertNotNull(foundMessages);
+		assertTrue(foundMessages.isEmpty());
+	}
+
+	// Test UPDATE operation
 	@Test
 	void updateMessage_WithValidData() {
 		MessageDto messageDto = new MessageDto();
@@ -89,7 +106,7 @@ class CommunicationsServiceApplicationTests {
 		assertEquals(1L, updatedMessage.getId());
 	}
 
-
+	// Test DELETE operation
 	@Test
 	void deleteMessage() {
 		// Act
