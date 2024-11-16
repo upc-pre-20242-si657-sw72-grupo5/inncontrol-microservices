@@ -36,7 +36,7 @@ public class MessageController {
         return new ResponseEntity<>(messageService.getAllMessages(), HttpStatus.OK);
     }
 
-    @Operation(summary = "Get messages by receiver")
+    @Operation(summary = "Update message")
     @PutMapping("/{id}")
     public ResponseEntity<Message> updateMessage(@PathVariable Long id, @RequestBody MessageDto messageDto) {
         return messageService.updateMessage(id, messageDto)
@@ -44,7 +44,7 @@ public class MessageController {
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @Operation(summary = "Get messages by receiver")
+    @Operation(summary = "Delete messages by receiver")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteMessage(@PathVariable Long id) {
         messageService.deleteMessage(id);

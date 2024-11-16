@@ -13,16 +13,16 @@ import org.mockito.MockitoAnnotations;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+
 class CommunicationsServiceApplicationTests {
 
 	@Mock
-	private MessageRepository messageRepository; // Corregido
+	private MessageRepository messageRepository;
 
 	@InjectMocks
 	private MessageService messageService;
@@ -53,20 +53,22 @@ class CommunicationsServiceApplicationTests {
 		assertEquals(1L, savedMessage.getId());
 	}
 
-
 	@Test
 	void getAllMessages() {
+		// Arrange
 		Message message = new Message();
 		message.setId(1L);
 
 		when(messageRepository.findAll()).thenReturn(List.of(message));
 
+		// Act
 		List<Message> foundMessages = messageService.getAllMessages();
 
+		// Assert
 		assertNotNull(foundMessages);
 		assertEquals(1, foundMessages.size());
+		assertEquals(1L, foundMessages.get(0).getId());
 	}
-
 	@Test
 	void updateMessage_WithValidData() {
 		MessageDto messageDto = new MessageDto();
@@ -87,9 +89,13 @@ class CommunicationsServiceApplicationTests {
 		assertEquals(1L, updatedMessage.getId());
 	}
 
+
 	@Test
 	void deleteMessage() {
+		// Act
 		messageService.deleteMessage(1L);
+
+		// Assert
 		verify(messageRepository).deleteById(1L);
 	}
 }
