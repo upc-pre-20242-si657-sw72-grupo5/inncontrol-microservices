@@ -59,6 +59,18 @@ class AccommodationServiceApplicationTests {
         assertEquals(101, foundRoom.get().getRoomNumber());
     }
 
+    @Test
+    void givenNonExistingRoomNumber_whenFindingRoom_thenReturnEmptyOptional() {
+        // Given
+        when(roomRepository.findByRoomNumber(999)).thenReturn(Optional.empty());
+
+        // When
+        Optional<Room> foundRoom = roomService.findRoomByRoomNumber(999);
+
+        // Then
+        assertFalse(foundRoom.isPresent());
+    }
+
     // Test UPDATE operation
     @Test
     void updateRoom() {
