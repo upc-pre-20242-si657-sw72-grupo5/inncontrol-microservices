@@ -25,39 +25,63 @@ class TaskTest {
         task.setDueDate(new Date(System.currentTimeMillis() + 86400000)); // 1 day in the future
     }
 
+    // Scenario: Complete a task
     @Test
     void testComplete() {
+        // Given: A task is in a scheduled state
+        // When: The task is completed
         task.complete();
+        // Then: The task status should be COMPLETED
         assertEquals(TaskStatus.COMPLETED, task.getStatus());
     }
 
+    // Scenario: Start a task
     @Test
     void testStart() {
+        // Given: A task is in a scheduled state
+        // When: The task is started
         task.start();
+        // Then: The task status should be IN_PROGRESS
         assertEquals(TaskStatus.IN_PROGRESS, task.getStatus());
     }
 
+    // Scenario: Check if task is completed
     @Test
     void testIsCompleted() {
+        // Given: A task is completed
         task.complete();
+        // When: We check if the task is completed
+        // Then: The task should be marked as completed
         assertTrue(task.isCompleted());
     }
 
+    // Scenario: Check if task is in progress
     @Test
     void testIsInProgress() {
+        // Given: A task is started
         task.start();
+        // When: We check if the task is in progress
+        // Then: The task should be marked as in progress
         assertTrue(task.isInProgress());
     }
 
+    // Scenario: Check if task is expired (due date in the past)
     @Test
     void testIsExpired() {
+        // Given: A task is scheduled with a past due date
         task.setDueDate(new Date(System.currentTimeMillis() - 86400000)); // 1 day in the past
+        // When: We check if the task is expired
+        // Then: The task should be marked as expired
         assertTrue(task.isExpired());
     }
 
+    // Scenario: Get nice formatted due date
     @Test
     void testGetNiceDueDate() {
+        // Given: A task has a due date
         String niceDueDate = task.getNiceDueDate();
+        // When: We fetch the nice formatted due date
+        // Then: The due date should not be null or empty
         assertNotNull(niceDueDate);
         assertFalse(niceDueDate.isEmpty());
     }
